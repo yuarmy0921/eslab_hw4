@@ -155,7 +155,6 @@ protected:
 
         void updateHeartRate(int16_t hrmCounter, uint8_t i)
         {
-            //printf("hrmounter: %d\n", hrmCounter);
             if (hrmCounter <= 255 && hrmCounter >= 0) {
                 valueBytes[FLAGS_BYTE_INDEX] = 1;
                 valueBytes[FLAGS_BYTE_INDEX + 1] = (uint8_t)(hrmCounter & 0xFF);
@@ -163,7 +162,6 @@ protected:
             } else {
                 valueBytes[FLAGS_BYTE_INDEX] = 1;
                 valueBytes[FLAGS_BYTE_INDEX + 1] = (uint8_t)(hrmCounter & 0xFF);
-                //valueBytes[FLAGS_BYTE_INDEX + 1] = (uint8_t)(255 & 0xff);
                 valueBytes[FLAGS_BYTE_INDEX + 2] = (uint8_t)(hrmCounter >> 8);
             }
         }

@@ -156,7 +156,6 @@ private:
         _magneto_y_value = pDataXYZ[1];
         _magneto_z_value = pDataXYZ[2];
         
-        printf("%d, %d, %d\n", _magneto_x_value, _magneto_y_value, _magneto_z_value);
         _magneto_service.updateHeartRate(_magneto_x_value, 0);
         ThisThread::sleep_for(0.33);
         _magneto_service.updateHeartRate(_magneto_y_value, 1);

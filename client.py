@@ -16,12 +16,9 @@ class ScanDelegate(DefaultDelegate):
             if cHandle == 13:
                 print("heart rate:", ord(data.decode()[-1]))
             else:
-                print(data)
                 first = data[1:2]
-                #print(type(first))
                 second = data[2:]
                 new_byte_string = second + first
-                print(first, second, new_byte_string)
                 num = int.from_bytes(new_byte_string, 'big', signed=True)
                 
                 print(f"magnetic flux {self.l[self.index]}: {num}")
