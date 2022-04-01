@@ -51,7 +51,7 @@ public:
     void start()
     {
         _ble.init(this, &HeartrateDemo::on_init_complete);
-
+        
         _event_queue.dispatch_forever();
     }
 
@@ -138,6 +138,7 @@ private:
     void update_heartRate_value()
     {
         /* you can read in the real value but here we just simulate a value */
+        printf("%d\n", _heartrate_value);
         _heartrate_value++;
 
         /*  60 <= bpm value < 110 */
@@ -156,12 +157,13 @@ private:
         _magneto_y_value = pDataXYZ[1];
         _magneto_z_value = pDataXYZ[2];
         
-        _magneto_service.updateHeartRate(_magneto_x_value, 0);
-        ThisThread::sleep_for(0.33);
-        _magneto_service.updateHeartRate(_magneto_y_value, 1);
-        ThisThread::sleep_for(0.33);
-        _magneto_service.updateHeartRate(_magneto_z_value, 2);
-        ThisThread::sleep_for(0.34);
+        printf("%d, %d, %d\n", _magneto_x_value, _magneto_y_value, _magneto_z_value);
+        _magneto_service.updateHeartRate(pDataXYZ, 0);
+        // ThisThread::sleep_for(0.33);
+        // _magneto_service.updateHeartRate(_magneto_y_value, 1);
+        // ThisThread::sleep_for(0.33);
+        // _magneto_service.updateHeartRate(_magneto_z_value, 2);
+        ThisThread::sleep_for(1);
     }
 
     /* these implement ble::Gap::EventHandler */

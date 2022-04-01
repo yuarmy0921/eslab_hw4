@@ -112,7 +112,7 @@ public:
      * @attention This function must be called in the execution context of the
      * BLE stack.
      */
-    void updateHeartRate(int16_t hrmCounter, uint8_t i) {
+    void updateHeartRate(int16_t *hrmCounter, uint8_t i) {
         valueBytes.updateHeartRate(hrmCounter, i);
         ble.gattServer().write(
             hrmRate.getValueHandle(),
@@ -145,7 +145,7 @@ protected:
      */
     struct HeartRateValueBytes {
         /* 1 byte for the Flags, and up to two bytes for heart rate value. */
-        static const unsigned MAX_VALUE_BYTES = 3;
+        static const unsigned MAX_VALUE_BYTES = 7;
         static const unsigned FLAGS_BYTE_INDEX = 0;
 
         static const unsigned VALUE_FORMAT_BITNUM = 0;
@@ -153,16 +153,20 @@ protected:
 
         HeartRateValueBytes() {}
 
-        void updateHeartRate(int16_t hrmCounter, uint8_t i)
+        void updateHeartRate(int16_t *xyz, uint8_t i)
         {
-            if (hrmCounter <= 255 && hrmCounter >= 0) {
-                valueBytes[FLAGS_BYTE_INDEX] = 1;
-                valueBytes[FLAGS_BYTE_INDEX + 1] = (uint8_t)(hrmCounter & 0xFF);
-                valueBytes[FLAGS_BYTE_INDEX + 2] = 0x00;
-            } else {
-                valueBytes[FLAGS_BYTE_INDEX] = 1;
-                valueBytes[FLAGS_BYTE_INDEX + 1] = (uint8_t)(hrmCounter & 0xFF);
-                valueBytes[FLAGS_BYTE_INDEX + 2] = (uint8_t)(hrmCounter >> 8);
+            //printf("hrmounter: %d\n", xyz);
+            for(int i = 0; i < 3; i++) {
+                if (xyz[i] <= 255 && xyz[i] >= 0) {
+                    valueBytes[FLAGS_BYTE_INDEX] = 1;
+                    valueBytes[FLAGS_BYTE_INDEX + 2*i + 1] = (uint8_t)(xyz[i] & 0xFF);
+                    valueBytes[FLAGS_BYTE_INDEX + 2*i + 2] = 0x00;
+                } else {
+                    valueBytes[FLAGS_BYTE_INDEX] = 1;
+                    valueBytes[FLAGS_BYTE_INDEX + 2*i + 1] = (uint8_t)(xyz[i] & 0xFF);
+                    //valueBytes[FLAGS_BYTE_INDEX + 1] = (uint8_t)(255 & 0xff);
+                    valueBytes[FLAGS_BYTE_INDEX + 2*i + 2] = (uint8_t)(xyz[i] >> 8);
+                }
             }
         }
 
@@ -178,11 +182,12 @@ protected:
 
         unsigned getNumValueBytes() const
         {
-            if (valueBytes[FLAGS_BYTE_INDEX] & VALUE_FORMAT_FLAG) {
-                return 1 + sizeof(uint16_t);
-            } else {
-                return 1 + sizeof(uint8_t);
-            }
+           // if (valueBytes[FLAGS_BYTE_INDEX] & VALUE_FORMAT_FLAG) {
+            return 1 + sizeof(uint16_t) * 3;
+            //} 
+            // else {
+            //     return 1 + sizeof(uint8_t);
+            // }
         }
 
     private:
