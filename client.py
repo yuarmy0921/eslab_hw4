@@ -16,9 +16,13 @@ class ScanDelegate(DefaultDelegate):
             if cHandle == 13:
                 print("heart rate:", ord(data.decode()[-1]))
             else:
+                '''
+                print(data)
                 first = data[1:2]
+                #print(type(first))
                 second = data[2:]
                 new_byte_string = second + first
+                print(first, second, new_byte_string)
                 num = int.from_bytes(new_byte_string, 'big', signed=True)
                 
                 print(f"magnetic flux {self.l[self.index]}: {num}")
@@ -26,6 +30,18 @@ class ScanDelegate(DefaultDelegate):
                 self.index += 1
                 if self.index == 3:
                     self.index = 0
+                '''
+                flag = data[0:1]
+                #print('x: ', data[1:3])
+                x = data[1:3]
+                y = data[3:5]
+                z = data[5:]
+                x = int.from_bytes(x, 'little', signed=True)
+                y = int.from_bytes(y, 'little', signed=True)
+                z = int.from_bytes(z, 'little', signed=True)
+                print(f"magnetic flux (x, y, z): ({x}, {y}, {z})")
+
+
                 
 scanner = Scanner().withDelegate(ScanDelegate())                             
 devices = scanner.scan(10.0)
